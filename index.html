@@ -1,1 +1,50 @@
-<h1>hello!</h1>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Zip Encrypt</title>
+    <meta name="description" content="Create a password-protected, downloadable zip file right in the browser">
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+  </head>
+  <body>
+    <h1>Zip encrypt</h1>
+
+    <h2>Create a password-protected, downloadable zip file right in the browser</h2>
+
+
+    <form onsubmit="return createZip()">
+      <label for="file-name-input">File name</label>
+      <input type="text" id="file-name-input"/>
+
+      <label for='file-text-input'>Enter the contents of your file</label>
+      <textarea id='file-text-input'></textarea>
+
+      <button type='submit'>Submit</button>
+    </form>
+  </body>
+
+  <script>
+    const createZip = () => {
+      const zip = new JSZip();
+      const contents = document.getElementById('file-text-input').value;
+      const fileName = document.getElementById('file-name-input').value;
+
+      if (!contents || !fileName) {
+        alert('Oops, you are missing fields');
+        return false;
+      }
+
+      zip.file(`${fileName}.txt`, CryptoJS.AES.encrypt(contents, 'password').toString());
+
+      zip.generateAsync({type:"blob"}).then(function (blob) {
+        saveAs(blob, `${fileName}.zip`);
+      }, function (err) {
+        alert('Oops, error');
+      });
+    }
+  </script>
+</html>
+
